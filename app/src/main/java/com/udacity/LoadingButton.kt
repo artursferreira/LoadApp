@@ -2,11 +2,8 @@ package com.udacity
 
 import android.animation.ValueAnimator
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
+import android.graphics.*
 import android.graphics.Paint.ANTI_ALIAS_FLAG
-import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.animation.doOnEnd
@@ -43,6 +40,7 @@ class LoadingButton @JvmOverloads constructor(
     private var circleAnimator = ValueAnimator()
     private var currentProgress: Float = 0f
     private var currentCircleAngle: Float = 0f
+    private var textBounds: Rect = Rect()
 
     var buttonState: ButtonState? = null
         set(value) {
@@ -69,6 +67,13 @@ class LoadingButton @JvmOverloads constructor(
         context.withStyledAttributes(attrs, R.styleable.LoadingButton) {
             customBackgroundColor = getColor(R.styleable.LoadingButton_customBackgroundColor, 0)
         }
+
+        textPaint.getTextBounds(
+            context.getString(R.string.button_loading_text),
+            0,
+            context.getString(R.string.button_loading_text).length,
+            textBounds
+        )
     }
 
     override fun onDraw(canvas: Canvas?) {
@@ -84,10 +89,17 @@ class LoadingButton @JvmOverloads constructor(
                     textPaint
                 )
 
-
-                val size = measuredHeight.toFloat() - paddingBottom.toFloat()
-                drawArc(paddingStart.toFloat(),
-                    paddingTop.toFloat(), size, size, 0f, currentCircleAngle, true, circlePaint)
+                val start = (widthSize / 2 + textBounds.exactCenterX()) + textBounds.height() / 2
+                drawArc(
+                    start,
+                    (heightSize / 2 - textBounds.height() / 2).toFloat(),
+                    start + textBounds.height(),
+                    (heightSize / 2 + textBounds.height() / 2).toFloat(),
+                    0f,
+                    currentCircleAngle,
+                    true,
+                    circlePaint
+                )
 
             } else {
                 drawRect(0f, 0f, widthSize.toFloat(), heightSize.toFloat(), backgroundPaint)
