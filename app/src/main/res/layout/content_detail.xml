@@ -8,4 +8,56 @@
     tools:context=".DetailActivity"
     tools:showIn="@layout/activity_detail">
 
+    <TextView
+        android:id="@+id/title_file_name"
+        android:text="@string/file_name_text"
+        app:layout_constraintEnd_toStartOf="@id/file_name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        style="@style/TextViewLabelStyle" />
+
+    <TextView
+        android:id="@+id/file_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_margin"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="21sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/title_file_name"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="LoadApp" />
+
+    <TextView
+        android:id="@+id/title_status"
+        android:text="@string/status_text"
+        app:layout_constraintEnd_toStartOf="@id/status"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title_file_name"
+        style="@style/TextViewLabelStyle" />
+
+    <TextView
+        android:id="@+id/status"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/default_margin"
+        android:layout_marginEnd="@dimen/default_margin"
+        android:textSize="21sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/file_name"
+        app:layout_constraintTop_toBottomOf="@id/file_name"
+        tools:text="Success" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/ok_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_margin"
+        android:background="@color/colorAccent"
+        android:text="@string/ok_button_text"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
