@@ -9,6 +9,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import kotlinx.android.synthetic.main.activity_main.*
@@ -23,12 +24,28 @@ class MainActivity : AppCompatActivity() {
     private lateinit var pendingIntent: PendingIntent
     private lateinit var action: NotificationCompat.Action
 
+    private lateinit var selectedUrl: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+
+        radio_group.setOnCheckedChangeListener { group, checkedId ->
+            when (checkedId) {
+                R.id.glide -> {
+                    selectedUrl = GLIDE_URL
+                }
+                R.id.load_app -> {
+                    selectedUrl = STARTER_URL
+                }
+                R.id.retrofit -> {
+                    selectedUrl = RETROFIT_URL
+                }
+            }
+        }
 
         custom_button.setOnClickListener {
             download()
@@ -42,21 +59,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun download() {
-        val request =
-            DownloadManager.Request(Uri.parse(URL))
-                .setTitle(getString(R.string.app_name))
-                .setDescription(getString(R.string.app_description))
-                .setRequiresCharging(false)
-                .setAllowedOverMetered(true)
-                .setAllowedOverRoaming(true)
+        if (::selectedUrl.isInitialized.not()) {
+            Toast.makeText(this, R.string.select_an_option, Toast.LENGTH_SHORT).show()
+        } else {
+            val request =
+                DownloadManager.Request(Uri.parse(selectedUrl))
+                    .setTitle(getString(R.string.app_name))
+                    .setDescription(getString(R.string.app_description))
+                    .setRequiresCharging(false)
+                    .setAllowedOverMetered(true)
+                    .setAllowedOverRoaming(true)
 
-        val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
-        downloadID =
-            downloadManager.enqueue(request)// enqueue puts the download request in the queue.
+            val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
+            downloadID =
+                downloadManager.enqueue(request)// enqueue puts the download request in the queue.
+        }
     }
 
     companion object {
-        private const val URL =
+        private const val GLIDE_URL =
+            "https://github.com/bumptech/glide/archive/master.zip"
+        private const val RETROFIT_URL =
+            "https://github.com/square/retrofit/archive/master.zip"
+        private const val STARTER_URL =
             "https://github.com/udacity/nd940-c3-advanced-android-programming-project-starter/archive/master.zip"
         private const val CHANNEL_ID = "channelId"
     }
