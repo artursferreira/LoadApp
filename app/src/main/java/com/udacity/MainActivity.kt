@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
@@ -14,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import java.io.File
 
 
 class MainActivity : AppCompatActivity() {
@@ -21,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     private var downloadID: Long = 0
 
     private lateinit var notificationManager: NotificationManager
+    private lateinit var downloadManager: DownloadManager
     private lateinit var pendingIntent: PendingIntent
     private lateinit var action: NotificationCompat.Action
 
@@ -54,7 +57,28 @@ class MainActivity : AppCompatActivity() {
 
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+            val downloadId = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+
+            if (downloadId == -1L) return
+
+            // query download status
+
+            // query download status
+            val cursor: Cursor =
+                downloadManager.query(downloadId?.let { DownloadManager.Query().setFilterById(it) })
+            if (cursor.moveToFirst()) {
+                val status: Int =
+                    cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
+                if (status == DownloadManager.STATUS_SUCCESSFUL) {
+
+                    // download is successful
+
+                } else {
+                    // download is cancelled
+                }
+            } else {
+                // download is cancelled
+            }
         }
     }
 
@@ -70,7 +94,7 @@ class MainActivity : AppCompatActivity() {
                     .setAllowedOverMetered(true)
                     .setAllowedOverRoaming(true)
 
-            val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
+            downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
             downloadID = downloadManager.enqueue(request)// enqueue puts the download request in the queue.
             custom_button.buttonState = ButtonState.Loading
         }
