@@ -13,6 +13,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
+import com.udacity.util.sendNotification
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import java.io.File
@@ -69,10 +70,15 @@ class MainActivity : AppCompatActivity() {
             if (cursor.moveToFirst()) {
                 val status: Int =
                     cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
+                notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+
                 if (status == DownloadManager.STATUS_SUCCESSFUL) {
 
                     // download is successful
-
+                    notificationManager.sendNotification(
+                        getString(R.string.notification_description),
+                        applicationContext
+                    )
                 } else {
                     // download is cancelled
                 }
@@ -95,7 +101,8 @@ class MainActivity : AppCompatActivity() {
                     .setAllowedOverRoaming(true)
 
             downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
-            downloadID = downloadManager.enqueue(request)// enqueue puts the download request in the queue.
+            downloadID =
+                downloadManager.enqueue(request)// enqueue puts the download request in the queue.
             custom_button.buttonState = ButtonState.Loading
         }
     }
@@ -107,7 +114,6 @@ class MainActivity : AppCompatActivity() {
             "https://github.com/square/retrofit/archive/master.zip"
         private const val STARTER_URL =
             "https://github.com/udacity/nd940-c3-advanced-android-programming-project-starter/archive/master.zip"
-        private const val CHANNEL_ID = "channelId"
     }
 
 }
