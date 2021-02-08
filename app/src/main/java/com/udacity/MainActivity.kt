@@ -11,6 +11,8 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
+import androidx.annotation.StringDef
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import com.udacity.util.sendNotification
@@ -28,7 +30,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var pendingIntent: PendingIntent
     private lateinit var action: NotificationCompat.Action
 
-    private lateinit var selectedUrl: String
+    private lateinit var selectedUrl: REPOSITORY
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,13 +42,13 @@ class MainActivity : AppCompatActivity() {
         radio_group.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
                 R.id.glide -> {
-                    selectedUrl = GLIDE_URL
+                    selectedUrl = REPOSITORY.GLIDE
                 }
                 R.id.load_app -> {
-                    selectedUrl = STARTER_URL
+                    selectedUrl = REPOSITORY.STARTER
                 }
                 R.id.retrofit -> {
-                    selectedUrl = RETROFIT_URL
+                    selectedUrl = REPOSITORY.RETROFIT
                 }
             }
         }
@@ -72,16 +74,12 @@ class MainActivity : AppCompatActivity() {
                     cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
                 notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
-                if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                notificationManager.sendNotification(
+                    getString(selectedUrl.text),
+                    status,
+                    applicationContext
+                )
 
-                    // download is successful
-                    notificationManager.sendNotification(
-                        getString(R.string.notification_description),
-                        applicationContext
-                    )
-                } else {
-                    // download is cancelled
-                }
             } else {
                 // download is cancelled
             }
@@ -93,7 +91,7 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, R.string.select_an_option, Toast.LENGTH_SHORT).show()
         } else {
             val request =
-                DownloadManager.Request(Uri.parse(selectedUrl))
+                DownloadManager.Request(Uri.parse(selectedUrl.url))
                     .setTitle(getString(R.string.app_name))
                     .setDescription(getString(R.string.app_description))
                     .setRequiresCharging(false)
@@ -107,6 +105,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    enum class REPOSITORY(val text: Int, val url: String) {
+        GLIDE(R.string.glide_text, GLIDE_URL),
+        RETROFIT(R.string.retrofit_text, RETROFIT_URL),
+        STARTER(R.string.load_app_text, STARTER_URL)
+    }
     companion object {
         private const val GLIDE_URL =
             "https://github.com/bumptech/glide/archive/master.zip"

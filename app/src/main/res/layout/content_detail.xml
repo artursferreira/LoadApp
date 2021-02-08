@@ -10,11 +10,11 @@
 
     <TextView
         android:id="@+id/title_file_name"
+        style="@style/TextViewLabelStyle"
         android:text="@string/file_name_text"
         app:layout_constraintEnd_toStartOf="@id/file_name"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        style="@style/TextViewLabelStyle" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/file_name"
@@ -30,11 +30,12 @@
 
     <TextView
         android:id="@+id/title_status"
+        style="@style/TextViewLabelStyle"
+        android:layout_width="0dp"
         android:text="@string/status_text"
         app:layout_constraintEnd_toStartOf="@id/status"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title_file_name"
-        style="@style/TextViewLabelStyle" />
+        app:layout_constraintTop_toBottomOf="@+id/file_name" />
 
     <TextView
         android:id="@+id/status"
@@ -53,7 +54,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/default_margin"
-        android:background="@color/colorAccent"
+        android:backgroundTint="@color/purple_700"
         android:text="@string/ok_button_text"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -16,6 +16,7 @@ class LoadingButton @JvmOverloads constructor(
     private var widthSize = 0
     private var heightSize = 0
     private var customBackgroundColor: Int = 0
+    private var customTextColor: Int = 0
 
     private val textPaint = Paint().apply {
         style = Paint.Style.FILL
@@ -66,7 +67,11 @@ class LoadingButton @JvmOverloads constructor(
     init {
         context.withStyledAttributes(attrs, R.styleable.LoadingButton) {
             customBackgroundColor = getColor(R.styleable.LoadingButton_customBackgroundColor, 0)
+            customTextColor = getColor(R.styleable.LoadingButton_customTextColor, 0)
         }
+
+        backgroundPaint.color = customBackgroundColor
+        textPaint.color = customTextColor
 
         textPaint.getTextBounds(
             context.getString(R.string.button_loading_text),
@@ -128,7 +133,7 @@ class LoadingButton @JvmOverloads constructor(
 
     private fun showLoading() {
         valueAnimator = ValueAnimator.ofFloat(0f, widthSize.toFloat()).apply {
-            duration = 2000
+            duration = 5000
             addUpdateListener { animation ->
                 currentProgress = animation.animatedValue as Float
                 invalidate()
@@ -138,7 +143,7 @@ class LoadingButton @JvmOverloads constructor(
         }
 
         circleAnimator = ValueAnimator.ofFloat(0f, 360f).apply {
-            duration = 2000
+            duration = 5000
             addUpdateListener { animation ->
                 currentCircleAngle = animation.animatedValue as Float
                 invalidate()

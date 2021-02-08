@@ -10,6 +10,8 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat.getSystemService
 import com.udacity.DetailActivity
+import com.udacity.DetailActivity.Companion.FILE_NAME
+import com.udacity.DetailActivity.Companion.STATUS
 import com.udacity.MainActivity
 import com.udacity.R
 
@@ -27,11 +29,18 @@ private val FLAGS = 0
  * @param context, activity context.
  */
 fun NotificationManager.sendNotification(
-    messageBody: String,
+    fileName: String,
+    status: Int,
     applicationContext: Context
 ) {
 
-    val contentIntent = Intent(applicationContext, DetailActivity::class.java)
+    val contentIntent = Intent(applicationContext, DetailActivity::class.java).apply {
+        putExtra(
+            FILE_NAME,
+            fileName
+        )
+        putExtra(STATUS, status)
+    }
     val contentPendingIntent = PendingIntent.getActivity(
         applicationContext,
         NOTIFICATION_ID,
@@ -39,11 +48,13 @@ fun NotificationManager.sendNotification(
         PendingIntent.FLAG_UPDATE_CURRENT
     )
 
+    val desc = applicationContext.getString(R.string.notification_description)
+
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         val importance = NotificationManager.IMPORTANCE_DEFAULT
         val channel: NotificationChannel =
             NotificationChannel(CHANNEL_ID, CHANNEL_NAME, importance).apply {
-                description = messageBody
+                description = desc
             }
 
         // Register the channel with the system
@@ -61,15 +72,19 @@ fun NotificationManager.sendNotification(
             applicationContext
                 .getString(R.string.notification_title)
         )
-        .setContentText(messageBody)
+        .setContentText(desc)
         .setContentIntent(contentPendingIntent)
         .setAutoCancel(true)
-        .setPriority(NotificationCompat.PRIORITY_HIGH)
+        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        .addAction(
+            R.drawable.ic_assistant_black_24dp,
+            applicationContext.getString(R.string.notification_button),
+            contentPendingIntent
+        )
 
     notify(NOTIFICATION_ID, builder.build())
 }
 
-// TODO: Step 1.14 Cancel all notifications
 /**
  * Cancels all notifications.
  *
